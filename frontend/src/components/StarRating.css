@@ -1,0 +1,40 @@
+.stars-display,
+.stars-interactive {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.star {
+  color: var(--gold-empty);
+  line-height: 1;
+}
+
+.star.filled { color: var(--gold); }
+
+.star.half {
+  position: relative;
+  color: var(--gold-empty);
+}
+
+.star.half::before {
+  content: '★';
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+  width: 50%;
+  overflow: hidden;
+}
+
+.star-btn {
+  background: none;
+  border: none;
+  color: var(--gold-empty);
+  line-height: 1;
+  padding: 0 1px;
+  transition: color 0.1s, transform 0.1s;
+}
+
+.star-btn.filled { color: var(--gold); }
+
+.star-btn:hover { color: var(--gold); transform: scale(1.15); }

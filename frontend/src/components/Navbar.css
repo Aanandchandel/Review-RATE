@@ -1,0 +1,267 @@
+.navbar {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-inner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  height: 60px;
+}
+
+/* Brand section: logo + text (left side) */
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.navbar-brand-logo {
+  height: 32px;
+  width: auto;
+  max-width: 120px;
+  object-fit: contain;
+  display: block;
+}
+
+.brand-text {
+  font-size: 1.1rem;
+  font-weight: normal;
+  color: var(--dark);
+}
+
+.brand-text .ampersand {
+  color: var(--purple);
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+/* Right side container (search + auth buttons) */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-left: auto;  /* pushes the whole group to the right */
+}
+
+/* Search bar – fixed width, sits on the right side */
+.navbar-search {
+  flex: 0 0 auto;
+  width: 280px;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--white);
+  transition: border-color 0.15s;
+  height: 36px;
+}
+
+.navbar-search:focus-within {
+  border-color: var(--purple);
+}
+
+.navbar-search input {
+  flex: 1;
+  border: none;
+  padding: 0 0.75rem;
+  font-size: 0.875rem;
+  outline: none;
+  background: transparent;
+  height: 100%;
+}
+
+.navbar-search-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.75rem;
+  height: 100%;
+}
+
+.navbar-search-btn:hover {
+  opacity: 0.8;          /* subtle hover effect */
+}
+
+.search-icon-img {
+  width: 18px;
+  height: 18px;
+  display: block;
+  filter: brightness(0) saturate(100%) invert(25%) sepia(98%) saturate(3000%) hue-rotate(250deg);
+}
+
+/* Navigation buttons (SignUp/Login or User menu) */
+.navbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.btn-nav {
+  background: none;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--dark);
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: color 0.15s;
+}
+
+.btn-nav:hover {
+  color: var(--purple);
+}
+
+.btn-nav-primary {
+  background: var(--purple);
+  color: #fff !important;
+  border-radius: 6px;
+  padding: 0.3rem 0.875rem;
+}
+
+.btn-nav-primary:hover {
+  background: var(--purple-dark);
+  color: #fff !important;
+}
+
+/* User menu (dropdown) */
+.user-menu {
+  position: relative;
+}
+
+.user-avatar-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 0.3rem 0.75rem 0.3rem 0.3rem;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.user-avatar-btn:hover {
+  border-color: var(--purple);
+}
+
+.user-avatar {
+  width: 28px;
+  height: 28px;
+  background: var(--purple);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.user-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--dark);
+}
+
+.chevron {
+  font-size: 0.6rem;
+  color: var(--muted);
+}
+
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  min-width: 200px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  z-index: 150;
+  overflow: hidden;
+}
+
+.dropdown-info {
+  display: flex;
+  flex-direction: column;
+  padding: 0.875rem 1rem 0.75rem;
+}
+
+.dropdown-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--dark);
+}
+
+.dropdown-email {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-top: 0.1rem;
+}
+
+.dropdown-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0;
+}
+
+.dropdown-logout {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: var(--danger);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.dropdown-logout:hover {
+  background: #FEF2F2;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .navbar-search {
+    width: 200px;
+  }
+  .navbar-right {
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .brand-text {
+    display: none;
+  }
+  .navbar-brand-logo {
+    height: 28px;
+  }
+  .navbar-search {
+    width: 160px;
+  }
+  .navbar-nav {
+    gap: 0.4rem;
+  }
+  .btn-nav {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.8rem;
+  }
+}

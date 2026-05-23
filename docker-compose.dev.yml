@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: rr-mongo-dev
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_dev_data:/data/db
+    networks:
+      - rr-dev
+
+  backend:
+    image: node:18-alpine
+    container_name: rr-backend-dev
+    working_dir: /app
+    # installs deps (including devDeps for nodemon) then starts with hot-reload
+    command: sh -c "npm install && npm run dev"
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      NODE_ENV: development
+      PORT: 5000
+      MONGODB_URI: mongodb://mongodb:27017/reviewrate
+      JWT_SECRET: dev_secret_change_in_prod
+    volumes:
+      - ./backend:/app
+      # isolate container node_modules from host
+      - backend_nm:/app/node_modules
+    depends_on:
+      - mongodb
+    networks:
+      - rr-dev
+
+  # frontend:
+  #   image: node:18-alpine
+  #   container_name: rr-frontend-dev
+  #   working_dir: /app
+  #   command: sh -c "npm install && npm start"
+  #   restart: unless-stopped
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     HOST: "0.0.0.0"
+  #     PORT: "3000"
+  #     # browser calls backend directly via the host-mapped port
+  #     REACT_APP_API_URL: "http://localhost:5000/api"
+  #     # required for file-watching inside Docker
+  #     CHOKIDAR_USEPOLLING: "true"
+  #     WDS_SOCKET_PORT: "3000"
+  #   volumes:
+  #     - ./frontend:/app
+  #     - frontend_nm:/app/node_modules
+  #   depends_on:
+  #     - backend
+  #   networks:
+  #     - rr-dev
+
+volumes:
+  mongo_dev_data:
+  backend_nm:
+  # frontend_nm:
+
+networks:
+  rr-dev:
+    driver: bridge
