@@ -30,4 +30,4 @@ export const getReviews = (companyId, params) =>
 export const createReview = (companyId, data) =>
   API.post(`/companies/${companyId}/reviews`, data);
 
-export const likeReview = (reviewId) => API.put(`/reviews/${reviewId}/like`);hhkjgyettej/'.pkoi87i7bbnmj'
+export const likeReview = (reviewId) => API.put(`/reviews/${reviewId}/like`);
