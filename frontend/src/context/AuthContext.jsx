@@ -19,8 +19,14 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
+  // New: Update user data (e.g., after profile picture upload)
+  const updateUser = (updatedUserData) => {
+    localStorage.setItem('rr_user', JSON.stringify(updatedUserData));
+    setUser(updatedUserData);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

@@ -24,12 +24,27 @@ export default function ReviewCard({ review }) {
     year: 'numeric',
   });
 
+  // Determine avatar content
+  const hasProfileImage = review.user && review.user.profileUrl;
+  const displayName = review.fullName; // or review.user?.name if you prefer
+
   return (
     <div className="review-card card">
       <div className="review-card-header">
-        <div className="reviewer-avatar">{review.fullName[0].toUpperCase()}</div>
+        {/* Show profile image if available, otherwise fallback to initials */}
+        {hasProfileImage ? (
+          <img
+            src={review.user.profileUrl}
+            alt={displayName}
+            className="reviewer-avatar-img"
+          />
+        ) : (
+          <div className="reviewer-avatar">
+            {displayName ? displayName[0].toUpperCase() : '?'}
+          </div>
+        )}
         <div className="reviewer-meta">
-          <span className="reviewer-name">{review.fullName}</span>
+          <span className="reviewer-name">{displayName}</span>
           <span className="review-date">{date}</span>
         </div>
         <div className="review-rating-badge">
@@ -40,25 +55,7 @@ export default function ReviewCard({ review }) {
       {/* <h4 className="review-subject">{review.subject}</h4> */}
       <p className="review-text">{review.reviewText}</p>
 
-      {/* <div className="review-actions">
-        <button
-          className={`like-btn ${liked ? 'liked' : ''}`}
-          onClick={handleLike}
-          disabled={liked}
-          title={liked ? 'Already liked' : 'Like this review'}
-        >
-          <span>&#128077;</span>
-          <span>{likes}</span>
-        </button>
-        <button
-          className="share-btn"
-          onClick={() => navigator.clipboard?.writeText(window.location.href)}
-          title="Copy link"
-        >
-          <span>&#128279;</span>
-          <span>Share</span>
-        </button>
-      </div> */}
+      {/* The like/share section is commented out as in your original */}
     </div>
   );
 }
