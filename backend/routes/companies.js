@@ -34,8 +34,8 @@ async function attachReviewStats(companies) {
       const avgRating =
         reviews.length > 0
           ? parseFloat(
-              (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1)
-            )
+            (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1)
+          )
           : 0;
       return { ...company.toObject(), reviewCount: reviews.length, avgRating };
     })
@@ -123,12 +123,15 @@ router.get('/:id/reviews', async (req, res) => {
     };
     const sortObj = sortMap[sort] || sortMap.newest;
 
-    const reviews = await Review.find({ company: req.params.id }).sort(sortObj);
+    const reviews = await Review.find({ company: req.params.id })
+      .populate('user', '-password')
+      .sort(sortObj);
+
     const avgRating =
       reviews.length > 0
         ? parseFloat(
-            (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1)
-          )
+          (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1)
+        )
         : 0;
 
     res.json({ reviews, avgRating, total: reviews.length });
@@ -138,20 +141,36 @@ router.get('/:id/reviews', async (req, res) => {
 });
 
 // POST /api/companies/:id/reviews
-router.post('/:id/reviews', async (req, res) => {
+router.post('/:id/reviews',  async (req, res) => {
   try {
     const company = await Company.findById(req.params.id);
     if (!company) return res.status(404).json({ error: 'Company not found' });
 
     const { fullName, subject, reviewText, rating } = req.body;
-    const review = new Review({
+
+    // Basic validation
+    if (!fullName?.trim() || !subject?.trim() || !reviewText?.trim() || !rating) {
+      return res.status(400).json({ error: 'All fields (fullName, subject, reviewText, rating) are required' });
+    }
+
+    // Prepare review data
+    const reviewData = {
       company: req.params.id,
-      fullName,
-      subject,
-      reviewText,
+      fullName: fullName.trim(),
+      subject: subject.trim(),
+      reviewText: reviewText.trim(),
       rating: parseInt(rating),
-    });
+    };
+
+    // If user is authenticated, attach their user ID
+    if (req.user) {
+      reviewData.user = req.user._id;
+      // reviewData.fullName = req.user.name;
+    }
+
+    const review = new Review(reviewData);
     await review.save();
+
     res.status(201).json(review);
   } catch (err) {
     res.status(400).json({ error: err.message });

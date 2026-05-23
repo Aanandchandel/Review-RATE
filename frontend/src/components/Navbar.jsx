@@ -2,20 +2,45 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import AuthModal from './AuthModal';
+import { uploadProfileImage } from '../api';    // <-- import the API function
 import './Navbar.css';
 
 export default function Navbar() {
-  const { user, logout } = useAuth();
+  const { user, logout, updateUser } = useAuth();   // <-- added updateUser
   const [query, setQuery] = useState('');
   const [authModal, setAuthModal] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const dropdownRef = useRef(null);
+  const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (query.trim()) navigate(`/?search=${encodeURIComponent(query.trim())}`);
     else navigate('/');
+  };
+
+  // Handle profile picture upload
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const { data } = await uploadProfileImage(file);
+      // data.user contains updated user (including new profileUrl)
+      if (updateUser) updateUser(data.user);
+      else console.warn('updateUser not provided in AuthContext');
+      setDropdownOpen(false);
+    } catch (err) {
+      console.error('Upload failed:', err.response?.data?.error || err.message);
+      alert('Failed to upload profile picture. Please try again.');
+    } finally {
+      setUploading(false);
+      // Reset file input so the same file can be selected again
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
   };
 
   useEffect(() => {
@@ -62,7 +87,16 @@ export default function Navbar() {
                     onClick={() => setDropdownOpen((o) => !o)}
                     aria-expanded={dropdownOpen}
                   >
-                    <span className="user-avatar">{user.name[0].toUpperCase()}</span>
+                    {/* Show profile image if exists, otherwise fallback to initial */}
+                    {user.profileUrl ? (
+                      <img
+                        src={user.profileUrl}
+                        alt="Avatar"
+                        className="user-avatar-img"
+                      />
+                    ) : (
+                      <span className="user-avatar">{user.name[0].toUpperCase()}</span>
+                    )}
                     <span className="user-name">{user.name.split(' ')[0]}</span>
                     <span className="chevron">{dropdownOpen ? '▲' : '▼'}</span>
                   </button>
@@ -74,6 +108,13 @@ export default function Navbar() {
                         <span className="dropdown-email">{user.email}</span>
                       </p>
                       <hr className="dropdown-divider" />
+                      <button
+                        className="dropdown-change-photo"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={uploading}
+                      >
+                        {uploading ? 'Uploading...' : 'Change Photo'}
+                      </button>
                       <button
                         className="dropdown-logout"
                         onClick={() => { logout(); setDropdownOpen(false); }}
@@ -95,6 +136,15 @@ export default function Navbar() {
           </div>
         </div>
       </header>
+
+      {/* Hidden file input for profile picture */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+        accept="image/*"
+        onChange={handleFileChange}
+      />
 
       {authModal && (
         <AuthModal
